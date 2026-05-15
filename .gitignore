@@ -1,0 +1,14 @@
+# outputs
+output/
+logs/
+lhe/
+*.lhe
+*.root
+
+# temporary MG files
+z_prod/
+SubProcesses/
+
+# system
+*.pyc
+__pycache__/
