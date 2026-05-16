@@ -1,0 +1,10 @@
+ee_z_ll:
+  description: "Z → l+l- at FCC-ee (Z pole)"
+  process_dir: "z_prod"
+  ebeam: 45.6
+  nevents: 5000
+  output_tag: "ee_z_ll_ecm91"
+
+  mg5:
+    model: "sm"
+    process: "generate e+ e- > l+ l-"

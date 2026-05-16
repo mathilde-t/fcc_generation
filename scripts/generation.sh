@@ -5,6 +5,7 @@ set -eo pipefail
 # What :
 #    This script generates FCC-ee Monte Carlo events using MadGraph5_aMC@NLO
 #    for the hard process and Pythia8 (via k4run) for decays, ISR and FSR.
+#    It is config-driven, with all parameters specified in 'scripts/processes.yaml'
 #   
 # Pipeline :
 #             1. Hard scattering (matrix element calculation) with MadGraph5_aMC@NLO
@@ -13,22 +14,42 @@ set -eo pipefail
 #
 # Output : .root file in the EDM4hep format (.e4h.root)
 #
-# How to run : 
+# How to run : e.g ee_z_ll_ecm91
 #             1. make sure the environment is set up : 
 #                source /cvmfs/sw.hsf.org/key4hep/setup.sh
-#             2. run bash generation.sh
+#             2. make sure to have the pythia card 'ee_z_ll_ecm91__p8.cmd' in 'cards/'
+#             2. run 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
 #
 # ============================================================
 
+# ---  load process configuration ---
+CONFIG_FILE=$1
 
-### Configuration
-PROCESS="ee_z_ll"
-PROCESS_DIR="z_prod"
+if [ -z "$CONFIG_FILE" ]; then
+    echo "Usage: bash generation.sh configs/processes.yaml:process_name"
+    echo "Example: bash generation.sh configs/processes.yaml:ee_z_ll"
+    exit 1
+fi
 
-NEVENTS=5000
-EBEAM=45.6
+# Split input (file:process)
+YAML_FILE=$(echo "$CONFIG_FILE" | cut -d: -f1)
+PROCESS=$(echo "$CONFIG_FILE" | cut -d: -f2)
 
-OUTPUT_TAG="${PROCESS}_ecm$(printf "%.0f" "$(echo "$EBEAM * 2" | bc)")"
+echo "--> Using config: $YAML_FILE"
+echo "--> Process: $PROCESS"
+
+# ---  Extract configuration ---
+EBEAM=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['ebeam'])")
+NEVENTS=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['nevents'])")
+PROCESS_DIR=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['process_dir'])")
+OUTPUT_TAG=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['output_tag'])")
+
+MG_MODEL=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['mg5']['model'])")
+MG_PROCESS=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['mg5']['process'])")
+
+LHE_NAME=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['pythia']['lhe_file'])")
+
+# ---  make directories dynamically ---
 MG_CARD="cards/${OUTPUT_TAG}__mg5.dat"
 PYTHIA_CARD="cards/${OUTPUT_TAG}__p8.cmd"
 
@@ -37,12 +58,12 @@ LOG_DIR="logs"
 OUTPUT_DIR="output"
 
 LHE_FILE="${PROCESS_DIR}/Events/run_01/unweighted_events.lhe.gz"
+LHE_COPY="${LHE_DIR}/${LHE_NAME%.gz}"
 
 OUTPUT_FILE="${OUTPUT_DIR}/${OUTPUT_TAG}.e4h.root"
 DELPHES_OUTPUT="${OUTPUT_DIR}/${OUTPUT_TAG}_delphes.root"
 
 mkdir -p cards config "${LHE_DIR}" "${LOG_DIR}" "${OUTPUT_DIR}"
-
 
 # --- Step 1 : Download steering files if not existing ---
 declare -A STEERING_FILES=(
@@ -58,36 +79,36 @@ for f in "${!STEERING_FILES[@]}"; do
     fi
 done
 
-
-# --- Step 2 : Simulate the hard scattering with MadGraph5_aMC@NLO (standalone gener.) ---
+# ---  Step 2 : Simulate the hard scattering with MadGraph5_aMC@NLO (standalone gener.) ---
 echo "--> Checking MadGraph installation"
 #echo "should give approx. /cvmfs/sw.hsf.org/spackages7/madgraph5amc/2.8.1/x86_64-centos7-gcc11.2.0-opt/nlauf/bin/mg5_aMC"
 which mg5_aMC
 
 echo "--> Running MadGraph"
 
-MG_TMP="${LOG_DIR}/mg5_run.cmd"
-
-cp "${MG_CARD}" "${MG_TMP}"
-
-cat >> "${MG_TMP}" <<EOF
-
+cat > "${MG_CARD}" <<EOF
+import model ${MG_MODEL}
+${MG_PROCESS}
 output ${PROCESS_DIR} -f
 launch
-
 set nevents ${NEVENTS}
 set ebeam1 ${EBEAM}
 set ebeam2 ${EBEAM}
-
 done
 EOF
 
-# --- Step 3 : save MG output (outcoing particles and infos) as .lhe file ---
-LHE_COPY="${LHE_DIR}/${OUTPUT_TAG}.lhe"
-cp "${LHE_FILE}" "${LHE_COPY}"
+# ---  Step 3 : save MG output (outcoing particles and infos) as .lhe file ---
+echo "--> Preparing LHE file"
 
+if [ ! -f "$LHE_FILE" ]; then
+    echo "ERROR: missing LHE file: $LHE_FILE"
+    exit 1
+fi
 
-# --- Step 4 : Showering, ISR, and FSR with Pythia8 (FCC k4run), create card ---
+cp "$LHE_FILE" "${LHE_DIR}/${LHE_NAME}.gz"
+gunzip -f "${LHE_DIR}/${LHE_NAME}.gz"
+
+# ---  Step 4 : Showering, ISR, and FSR with Pythia8 (FCC k4run), create card ---
 echo "--> Checking k4run installation"
 #echo "should give approx. /cvmfs/sw.hsf.org/key4hep/releases/2025-05-29/x86_64-almalinux9-gcc14.2.0-opt/k4fwcore/1.3-lix236/bin/k4run"
 export OUTPUT_FILE
@@ -100,8 +121,7 @@ k4run config/pythia.py \
     --Pythia8.PythiaInterface.pythiacard ${PYTHIA_CARD} \
     > ${LOG_DIR}/pythia.log 2>&1
 
-
-# --- Step 5 : Detector simulation with Delphes (FCC k4run) ---
+# ---  Step 5 : etector simulation with Delphes (FCC k4run) ---
 echo "--> Running detector simulation (Delphes + Pythia)"
 
 DelphesPythia8_EDM4HEP \
@@ -113,5 +133,5 @@ DelphesPythia8_EDM4HEP \
 
 
 echo "--> Event generation done :)"
-echo "Output file generator level : ${OUTPUT_FILE}"
-echo "Output file detector level : ${DELPHES_OUTPUT}"
+echo "Output: ${OUTPUT_FILE}"
+echo "Delphes: ${DELPHES_OUTPUT}"
