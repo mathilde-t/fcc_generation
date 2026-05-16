@@ -22,15 +22,15 @@ set -eo pipefail
 
 
 ### Configuration
-PROCESS="ee_z_ll_ecm91"
+PROCESS="ee_z_ll"
+PROCESS_DIR="z_prod"
 
 NEVENTS=5000
 EBEAM=45.6
 
-PROCESS_DIR="z_prod"
-
-MG_CARD="cards/${PROCESS}__mg5.dat"
-PYTHIA_CARD="cards/${PROCESS}__p8.cmd"
+OUTPUT_TAG="${PROCESS}_ecm$(printf "%.0f" "$(echo "$EBEAM * 2" | bc)")"
+MG_CARD="cards/${OUTPUT_TAG}__mg5.dat"
+PYTHIA_CARD="cards/${OUTPUT_TAG}__p8.cmd"
 
 LHE_DIR="lhe"
 LOG_DIR="logs"
@@ -38,8 +38,8 @@ OUTPUT_DIR="output"
 
 LHE_FILE="${PROCESS_DIR}/Events/run_01/unweighted_events.lhe.gz"
 
-OUTPUT_FILE="${OUTPUT_DIR}/${PROCESS}.e4h.root"
-DELPHES_OUTPUT="${OUTPUT_DIR}/${PROCESS}_delphes.root"
+OUTPUT_FILE="${OUTPUT_DIR}/${OUTPUT_TAG}.e4h.root"
+DELPHES_OUTPUT="${OUTPUT_DIR}/${OUTPUT_TAG}_delphes.root"
 
 mkdir -p cards config "${LHE_DIR}" "${LOG_DIR}" "${OUTPUT_DIR}"
 
@@ -66,29 +66,24 @@ which mg5_aMC
 
 echo "--> Running MadGraph"
 
-# MG_TMP="${LOG_DIR}/mg5_run.cmd"
-# # 
-# # mg5_aMC "${MG_TMP}" \
-# #     > "${LOG_DIR}/mg5.log" 2>&1
-# 
-# cat > "${MG_TMP}" <<EOF
-# import model sm
-# generate e+ e- > z
-# output z_prod -f
-# launch
-# 
-# set nevents ${NEVENTS}
-# set ebeam1 ${EBEAM}
-# set ebeam2 ${EBEAM}
-# EOF
-# 
-# mg5_aMC "${MG_TMP}" > "${LOG_DIR}/mg5.log" 2>&1
+MG_TMP="${LOG_DIR}/mg5_run.cmd"
 
-mg5_aMC "${MG_CARD}" \
-    > ${LOG_DIR}/mg5.log 2>&1
+cp "${MG_CARD}" "${MG_TMP}"
+
+cat >> "${MG_TMP}" <<EOF
+
+output ${PROCESS_DIR} -f
+launch
+
+set nevents ${NEVENTS}
+set ebeam1 ${EBEAM}
+set ebeam2 ${EBEAM}
+
+done
+EOF
 
 # --- Step 3 : save MG output (outcoing particles and infos) as .lhe file ---
-LHE_COPY="${LHE_DIR}/${PROCESS}.lhe"
+LHE_COPY="${LHE_DIR}/${OUTPUT_TAG}.lhe"
 cp "${LHE_FILE}" "${LHE_COPY}"
 
 
