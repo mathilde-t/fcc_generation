@@ -18,7 +18,11 @@ set -eo pipefail
 #             1. make sure the environment is set up : 
 #                source /cvmfs/sw.hsf.org/key4hep/setup.sh
 #             2. make sure to have the pythia card 'ee_z_ll_ecm91__p8.cmd' in 'cards/'
-#             2. run 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
+#             3. run 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
+#
+#             4. merge runs with 'hadd' if needed :
+#                 hadd output/merged_ee_mumu.e4h.root output/ee_z_{ee,mumu}_ecm91.e4h.root
+#                 hadd output/merged_ee_mumu_delphes.root output/ee_z_{ee,mumu}_ecm91_delphes.root
 #
 # ============================================================
 
@@ -120,6 +124,8 @@ k4run config/pythia.py \
     -n ${NEVENTS} \
     --Pythia8.PythiaInterface.pythiacard ${PYTHIA_CARD} \
     > ${LOG_DIR}/pythia.log 2>&1
+
+mv output_pythia.root "${OUTPUT_FILE}"
 
 # ---  Step 5 : etector simulation with Delphes (FCC k4run) ---
 echo "--> Running detector simulation (Delphes + Pythia)"

@@ -8,3 +8,35 @@ ee_z_ll:
   mg5:
     model: "sm"
     process: "generate e+ e- > l+ l-"
+
+  pythia:
+    lhe_file: "ee_z_ll_ecm91.lhe"
+
+ee_z_ee:
+  description: "Z → e+e- at FCC-ee (Z pole)"
+  process_dir: "z_prod"
+  ebeam: 45.6
+  nevents: 5000
+  output_tag: "ee_z_ee_ecm91"
+
+  mg5:
+    model: "sm"
+    process: "generate e+ e- > e+ e-"
+
+  pythia:
+    lhe_file: "ee_z_ee_ecm91.lhe"
+
+
+ee_z_mumu:
+  description: "Z → μ+μ- at FCC-ee (Z pole)"
+  process_dir: "z_prod"
+  ebeam: 45.6
+  nevents: 5000
+  output_tag: "ee_z_mumu_ecm91"
+
+  mg5:
+    model: "sm"
+    process: "generate e+ e- > mu+ mu-"
+
+  pythia:
+    lhe_file: "ee_z_mumu_ecm91.lhe"
