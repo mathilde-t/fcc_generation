@@ -10,6 +10,7 @@
 Random:setSeed = on
 Random:seed = 12345
 Main:timesAllowErrors = 5          ! how many aborts before run stops
+Main:numberOfEvents = 5000
 Stat:showProcessLevel = on
 
 ! ==========================================================

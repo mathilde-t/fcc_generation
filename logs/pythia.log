@@ -1,7 +1,7 @@
 [k4run - INFO] k4run.main: --> Pythia8 --> HepMCToEDMConverter --> StableParticles
-[k4run - INFO] k4run.main: Option name: StableParticles.OutputLevel 0
-[k4run - INFO] k4run.main: Option name: StableParticles.Asynchronous False
-[k4run - INFO] k4run.main: Option name: StableParticles.accept [1]
+[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.OutputLevel 0
+[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.Asynchronous False
+[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.hepmcStatusList []
 [k4run - INFO] k4run.main: Option name: EventDataSvc.OutputLevel 0
 [k4run - INFO] k4run.main: Option name: EventDataSvc.InhibitPaths []
 [k4run - INFO] k4run.main: Option name: Pythia8.PythiaInterface.OutputLevel 0
@@ -13,9 +13,9 @@
 [k4run - INFO] k4run.main: Option name: Pythia8.PythiaInterface.UserDecayFile 
 [k4run - INFO] k4run.main: Option name: Pythia8.PythiaInterface.EvtGenParticleDataFile Generation/data/evt.pdl
 [k4run - INFO] k4run.main: Option name: Pythia8.PythiaInterface.EvtGenExcludes []
-[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.OutputLevel 0
-[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.Asynchronous False
-[k4run - INFO] k4run.main: Option name: HepMCToEDMConverter.hepmcStatusList []
+[k4run - INFO] k4run.main: Option name: StableParticles.OutputLevel 0
+[k4run - INFO] k4run.main: Option name: StableParticles.Asynchronous False
+[k4run - INFO] k4run.main: Option name: StableParticles.accept [1]
 [k4run - INFO] k4run.main: Option name: MetadataSvc.OutputLevel 0
 [k4run - INFO] k4run.main: Option name: IOSvc.OutputLevel 0
 [k4run - INFO] k4run.main: Option name: IOSvc.CollectionNames []
@@ -39,7 +39,7 @@
 ApplicationMgr     SUCCESS 
 ====================================================================================================================================
                                                    Welcome to ApplicationMgr (GaudiCoreSvc v40r2)
-                                          running on t3ui06.psi.ch on Mon Jun 22 17:18:16 2026
+                                          running on t3ui06.psi.ch on Tue Jun 23 15:59:44 2026
 ====================================================================================================================================
 ApplicationMgr        INFO Application Manager Configured successfully
 RndmGenSvc.Engine     INFO Generator engine type:HepRndm::SynchronizedEngine<CLHEP::RanluxEngine>
@@ -55,7 +55,7 @@ RndmGenSvc            INFO Using Random engine:HepRndm::Engine<CLHEP::RanluxEngi
  |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.315      |  | 
  |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change: 27 May 2025  |  | 
  |  |   P       Y      T    H   H   I   A   A                                      |  | 
- |  |   P       Y      T    H   H  III  A   A    Now is 22 Jun 2026 at 17:18:16    |  | 
+ |  |   P       Y      T    H   H  III  A   A    Now is 23 Jun 2026 at 15:59:44    |  | 
  |  |                                                                              |  | 
  |  |   Program documentation and an archive of historic versions is found on:     |  | 
  |  |                                                                              |  | 
@@ -121,6 +121,7 @@ RndmGenSvc            INFO Using Random engine:HepRndm::Engine<CLHEP::RanluxEngi
  | Beams:frameType                               |                        4 |            1           1           5 | 
  | Beams:LHEF                                    |  lhe/ee_z_mumu_ecm91.lhe |         void                         | 
  | Init:showChangedParticleData                  |                      off |           on                         | 
+ | Main:numberOfEvents                           |                     5000 |         1000           0             | 
  | Main:timesAllowErrors                         |                        5 |           10           0             | 
  | Next:numberCount                              |                      100 |         1000           0             | 
  | Next:numberShowEvent                          |                        0 |            1           0             | 
