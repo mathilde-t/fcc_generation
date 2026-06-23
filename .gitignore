@@ -1,13 +1,13 @@
 # outputs
 output/
-logs/
-lhe/
-*.lhe
+# logs/
+# lhe/
+# *.lhe
 *.root
 
 # temporary MG files
-z_prod/
-SubProcesses/
+# z_prod/
+# SubProcesses/
 
 # system
 *.pyc
