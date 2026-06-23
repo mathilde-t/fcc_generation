@@ -140,15 +140,14 @@ export OUTPUT_FILE
 which k4run
 
 echo "--> Running Pythia"
+# always recreate a new Pythia card to match the parameters processes.yaml config file
+echo "--> Creating ${PYTHIA_CARD} from template"
 
-if [ ! -f "${PYTHIA_CARD}" ]; then
-    echo "--> No dedicated Pythia card found"
-    echo "--> Creating ${PYTHIA_CARD} from template"
+cp cards/template_p8.cmd "${PYTHIA_CARD}"
 
-    cp cards/template_p8.cmd "${PYTHIA_CARD}"
-
-    sed -i "s|Beams:LHEF = .*|Beams:LHEF = lhe/${LHE_NAME}|" "${PYTHIA_CARD}"
-fi
+# write the number of events and LHE file name from processes.yaml dynamically into the Pythia card
+sed -i "s|Main:numberOfEvents = .*|Main:numberOfEvents = ${NEVENTS}|" "${PYTHIA_CARD}"
+sed -i "s|Beams:LHEF = .*|Beams:LHEF = lhe/${LHE_NAME}|" "${PYTHIA_CARD}"
 
 k4run config/pythia.py \
     -n ${NEVENTS} \
@@ -158,7 +157,7 @@ k4run config/pythia.py \
 mv output_pythia.root "${OUTPUT_FILE}"
 
 # ---  Step 5 : detector simulation with Delphes (FCC k4run) ---
-echo "--> Running detector simulation (Delphes + Pythia)"
+echo "--> Running detector simulation (Delphes)"
 
 DelphesPythia8_EDM4HEP \
     config/card_IDEA.tcl \
