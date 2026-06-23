@@ -1,6 +1,6 @@
 import model sm
-generate e+ e- > z > mu+ mu-
-output z_res_prod_mumu -f
+generate e+ e- > e+ e-
+output z_prod_ee -f
 launch
 set nevents 5000
 set ebeam1 45.6

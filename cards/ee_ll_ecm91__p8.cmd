@@ -1,5 +1,5 @@
-! Generic Pythia8 template card for FCC-ee LHE input
-! This file is automatically adapted by generation.sh
+! main03.cmnd.
+! This file contains commands to be read in for a Pythia8 run.
 ! Lines not beginning with a letter or digit are comments.
 ! Names are case-insensitive  -  but spellings-sensitive!
 
@@ -28,7 +28,7 @@ Next:numberShowEvent = 0           ! print event record n times
 ! ==========================================================
 
 Beams:frameType = 4
-Beams:LHEF = lhe/ee_z_mumu_ecm91.lhe
+Beams:LHEF = lhe/ee_ll_ecm91.lhe
 
 ! ==========================================================
 ! ISR and FSR

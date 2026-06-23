@@ -18,11 +18,16 @@ set -eo pipefail
 #             1. make sure the environment is set up : 
 #                source /cvmfs/sw.hsf.org/key4hep/setup.sh
 #             2. make sure to have the pythia card 'ee_z_ll_ecm91__p8.cmd' in 'cards/'
-#             3. run 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
+#             3.1 sinlge run : 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
+#             3.2 multiple runs : 'for p in ee_ee ee_mumu ee_z_ee ee_z_mumu; do
+#                                   bash scripts/generation.sh scripts/processes.yaml:$p
+#                                   done'
 #
 #             4. merge runs with 'hadd' if needed :
 #                 hadd output/merged_ee_mumu.e4h.root output/ee_z_{ee,mumu}_ecm91.e4h.root
 #                 hadd output/merged_ee_mumu_delphes.root output/ee_z_{ee,mumu}_ecm91_delphes.root
+#
+# Results : MG5 to be found in '<process_dir>/HTML/run_01/results.html'
 #
 # ============================================================
 
@@ -89,6 +94,15 @@ echo "--> Checking MadGraph installation"
 which mg5_aMC
 
 echo "--> Running MadGraph"
+echo "PROCESS_DIR = ${PROCESS_DIR}"
+MG_PROCESS=$(echo "$MG_PROCESS" | tr '|' '\n')
+echo "MG_PROCESS = ${MG_PROCESS}"
+
+if [ -z "$PROCESS_DIR" ]; then
+    echo "FATAL: PROCESS_DIR is empty"
+    exit 1
+fi
+rm -rf "${PROCESS_DIR:?}"
 
 cat > "${MG_CARD}" <<EOF
 import model ${MG_MODEL}
@@ -101,16 +115,23 @@ set ebeam2 ${EBEAM}
 done
 EOF
 
+mg5_aMC "${MG_CARD}"
+
 # ---  Step 3 : save MG output (outcoing particles and infos) as .lhe file ---
 echo "--> Preparing LHE file"
 
-if [ ! -f "$LHE_FILE" ]; then
-    echo "ERROR: missing LHE file: $LHE_FILE"
+#if [ ! -f "$LHE_FILE" ]; then
+LHE_FILE=$(find "${PROCESS_DIR}" -name "unweighted_events.lhe.gz" | head -n 1)
+
+if [ -z "$LHE_FILE" ]; then
+    echo "ERROR: no LHE file found in ${PROCESS_DIR}"
+    find "${PROCESS_DIR}" -type f | head -100
     exit 1
 fi
 
 cp "$LHE_FILE" "${LHE_DIR}/${LHE_NAME}.gz"
 gunzip -f "${LHE_DIR}/${LHE_NAME}.gz"
+echo "--> LHE file : ${LHE_FILE}"
 
 # ---  Step 4 : Showering, ISR, and FSR with Pythia8 (FCC k4run), create card ---
 echo "--> Checking k4run installation"
@@ -120,6 +141,15 @@ which k4run
 
 echo "--> Running Pythia"
 
+if [ ! -f "${PYTHIA_CARD}" ]; then
+    echo "--> No dedicated Pythia card found"
+    echo "--> Creating ${PYTHIA_CARD} from template"
+
+    cp cards/template_p8.cmd "${PYTHIA_CARD}"
+
+    sed -i "s|Beams:LHEF = .*|Beams:LHEF = lhe/${LHE_NAME}|" "${PYTHIA_CARD}"
+fi
+
 k4run config/pythia.py \
     -n ${NEVENTS} \
     --Pythia8.PythiaInterface.pythiacard ${PYTHIA_CARD} \
@@ -127,7 +157,7 @@ k4run config/pythia.py \
 
 mv output_pythia.root "${OUTPUT_FILE}"
 
-# ---  Step 5 : etector simulation with Delphes (FCC k4run) ---
+# ---  Step 5 : detector simulation with Delphes (FCC k4run) ---
 echo "--> Running detector simulation (Delphes + Pythia)"
 
 DelphesPythia8_EDM4HEP \

@@ -1,0 +1,10 @@
+import model sm
+define l+ = e+ mu+ ta+
+define l- = e- mu- ta-
+generate e+ e- > l+ l-
+output z_prod_ll -f
+launch
+set nevents 5000
+set ebeam1 45.6
+set ebeam2 45.6
+done

@@ -28,7 +28,7 @@ Next:numberShowEvent = 0           ! print event record n times
 ! ==========================================================
 
 Beams:frameType = 4
-Beams:LHEF = lhe/ee_z_mumu_ecm91.lhe
+Beams:LHEF = lhe/ee_ll2_ecm91.lhe
 
 ! ==========================================================
 ! ISR and FSR
