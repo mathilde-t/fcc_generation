@@ -8,7 +8,7 @@
  |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.315      |  | 
  |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change: 27 May 2025  |  | 
  |  |   P       Y      T    H   H   I   A   A                                      |  | 
- |  |   P       Y      T    H   H  III  A   A    Now is 23 Jun 2026 at 15:59:47    |  | 
+ |  |   P       Y      T    H   H  III  A   A    Now is 15 Jul 2026 at 09:42:39    |  | 
  |  |                                                                              |  | 
  |  |   Program documentation and an archive of historic versions is found on:     |  | 
  |  |                                                                              |  | 
@@ -52,7 +52,7 @@
  PYTHIA Warning in JetMatchingMadgraph:init: No alpsfact
  *-----------------------  SusyLesHouches SUSY/BSM Interface  ------------------------*
  | Last Change 12 Apr 2017 - P. Skands
- | Parsing: lhe/ee_z_mumu_ecm91.lhe
+ | Parsing: lhe/ee_mumu_ecm91.lhe
  | (SLHA::readFile) line 360 - storing non-SLHA(2) block: yukawa
  *------------------------------------------------------------------------------------*
  PYTHIA Info from SLHAinterface::initSLHA: No MODSEL found, keeping internal SUSY switched off
@@ -80,7 +80,7 @@
  | Name                                          |                      Now |      Default         Min         Max | 
  |                                               |                          |                                      | 
  | Beams:frameType                               |                        4 |            1           1           5 | 
- | Beams:LHEF                                    |  lhe/ee_z_mumu_ecm91.lhe |         void                         | 
+ | Beams:LHEF                                    |    lhe/ee_mumu_ecm91.lhe |         void                         | 
  | Init:showChangedParticleData                  |                      off |           on                         | 
  | Main:numberOfEvents                           |                     5000 |         1000           0             | 
  | Main:timesAllowErrors                         |                        5 |           10           0             | 
@@ -103,7 +103,7 @@
 
   Processes, with strategy-dependent cross section info 
   number      xsec (pb)      xerr (pb)      xmax (pb) 
-       1     2.0126e+03     1.3925e+00     2.0126e+03
+       1     2.0247e+03     1.6469e+00     2.0247e+03
 
  --------  End LHA initialization information  -------- 
 ** INFO: adding module        TruthVertexFinder        TruthVertexFinder        
@@ -206,7 +206,7 @@ AcceptanceClx:: Acceptance encoding with 39 pt nodes and 89 theta nodes
 
  --------  LHA event information and listing  ---------------------------------------------------------------------- 
 
-    process = 1           weight = 2.0126e+03       scale = 9.1200e+01   (GeV) 
+    process = 1           weight = 2.0247e+03       scale = 9.1200e+01   (GeV) 
                         alpha_em = 7.5468e-03      alpha_strong = 1.1800e-01  
 
     Participating Particles 
@@ -214,8 +214,8 @@ AcceptanceClx:: Acceptance encoding with 39 pt nodes and 89 theta nodes
 1     -11       -1   0     0     0     0     0.000      0.000      45.600     45.600     0.000      0.000   1.000   
 2     11        -1   0     0     0     0     -0.000     -0.000     -45.600    45.600     0.000      0.000   -1.000  
 3     23        2    1     2     0     0     0.000      0.000      0.000      91.200     91.200     0.000   0.000   
-4     -13       1    3     3     0     0     -7.807     -18.413    -40.980    45.600     0.000      0.000   -1.000  
-5     13        1    3     3     0     0     7.807      18.413     40.980     45.600     0.000      0.000   1.000   
+4     -13       1    3     3     0     0     39.629     20.900     8.492      45.600     0.000      0.000   1.000   
+5     13        1    3     3     0     0     -39.629    -20.900    -8.492     45.600     0.000      0.000   -1.000  
 
  --------  End LHA event information and listing  ------------------------------------------------------------------ 
 
@@ -247,8 +247,8 @@ AcceptanceClx:: Acceptance encoding with 39 pt nodes and 89 theta nodes
      3        -11  (e+)               -21     1     0     5     0     0     0      0.000      0.000     45.600     45.600      0.000
      4         11  (e-)               -21     2     0     5     0     0     0      0.000      0.000    -45.600     45.600      0.000
      5         23  (Z0)               -22     3     4     6     7     0     0      0.000      0.000      0.000     91.200     91.200
-     6        -13  mu+                 23     5     0     0     0     0     0     -7.807    -18.413    -40.980     45.600      0.106
-     7         13  mu-                 23     5     0     0     0     0     0      7.807     18.413     40.980     45.600      0.106
+     6        -13  mu+                 23     5     0     0     0     0     0     39.628     20.900      8.492     45.600      0.106
+     7         13  mu-                 23     5     0     0     0     0     0    -39.628    -20.900     -8.492     45.600      0.106
                                    Charge sum:  0.000           Momentum sum:      0.000      0.000      0.000     91.200     91.200
 
  --------  End PYTHIA Event Listing  -----------------------------------------------------------------------------------------------
@@ -354,14 +354,14 @@ AcceptanceClx:: Acceptance encoding with 39 pt nodes and 89 theta nodes
 ** Exiting ...
 ------------------------------------------------------------------------
 
-Pythia8 Cross-section (Les Houches User Process(es)): 2012.600 +/- 0.000 pb
+Pythia8 Cross-section (Les Houches User Process(es)): 2024.698 +/- 0.000 pb
 
 Input LHEF Cross-section:
- - sum: 2012.600
+ - sum: 2024.698
 
 Information from LHEF file:
 #  Number of Events        :       5000
-#  Integrated weight (pb)  :       2012.6
+#  Integrated weight (pb)  :       2024.698
 
 ------------------------------------------------------------------------
 

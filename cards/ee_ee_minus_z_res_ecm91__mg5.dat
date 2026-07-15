@@ -1,0 +1,8 @@
+import model sm
+generate e+ e- > e+ e- $ z
+output ee_ee_minus_z_res -f
+launch
+set nevents 5000
+set ebeam1 45.6
+set ebeam2 45.6
+done

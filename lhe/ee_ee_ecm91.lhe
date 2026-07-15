@@ -77,7 +77,7 @@ define l- = e- mu-
 define vl = ve vm vt
 define vl~ = ve~ vm~ vt~
 generate e+ e- > e+ e-
-output z_prod_ee -f
+output DY__prod_ee -f
 ]]>
 </MG5ProcCard>
 <MGProcCard>
