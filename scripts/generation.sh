@@ -18,8 +18,8 @@ set -eo pipefail
 #             1. make sure the environment is set up : 
 #                source /cvmfs/sw.hsf.org/key4hep/setup.sh
 #             2. make sure to have the pythia card 'ee_z_ll_ecm91__p8.cmd' in 'cards/'
-#             3.1 sinlge run : 'bash scripts/generation.sh scripts/processes.yaml:ee_z_ll'
-#             3.2 multiple runs : 'for p in ee_ee ee_mumu ee_z_ee ee_z_mumu; do
+#             3.1 sinlge run : 'bash scripts/generation.sh scripts/processes.yaml:ee_ee'
+#             3.2 multiple runs : 'for p in ee_ee ee_mumu ee_z_ee ee_z_mumu ee_ee_minus_z_res ee_mumu_minus_z_res; do
 #                                   bash scripts/generation.sh scripts/processes.yaml:$p
 #                                   done'
 #
@@ -48,13 +48,42 @@ echo "--> Using config: $YAML_FILE"
 echo "--> Process: $PROCESS"
 
 # ---  Extract configuration ---
-EBEAM=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['ebeam'])")
-NEVENTS=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['nevents'])")
 PROCESS_DIR=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['process_dir'])")
 OUTPUT_TAG=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['output_tag'])")
 
+EBEAM=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['ebeam'])")
+NEVENTS=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['nevents'])")
 MG_MODEL=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['mg5']['model'])")
 MG_PROCESS=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['mg5']['process'])")
+
+get_mg_cut() {
+    python3 - "$YAML_FILE" "$PROCESS" "$1" <<'EOF'
+import sys
+import yaml
+
+yaml_file, process, cut = sys.argv[1:]
+
+with open(yaml_file) as f:
+    cfg = yaml.safe_load(f)
+
+print(cfg.get(process, {})
+         .get("mg5", {})
+         .get("cuts", {})
+         .get(cut, ""))
+EOF
+}
+
+MG_ETAL=$(get_mg_cut etal)
+MG_PTL=$(get_mg_cut ptl)
+MG_DRLL=$(get_mg_cut drll)
+MG_MMLL=$(get_mg_cut mmll)
+MG_MMLLMAX=$(get_mg_cut mmllmax)
+
+echo "MG_ETAL = $MG_ETAL"
+echo "MG_PTL = $MG_PTL"
+echo "MG_DRLL = $MG_DRLL"
+echo "MG_MMLL = $MG_MMLL"
+echo "MG_MMLLMAX = $MG_MMLLMAX"
 
 LHE_NAME=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['pythia']['lhe_file'])")
 
@@ -65,6 +94,16 @@ PYTHIA_CARD="cards/${OUTPUT_TAG}__p8.cmd"
 LHE_DIR="lhe"
 LOG_DIR="logs"
 OUTPUT_DIR="output"
+
+# --- put large files on EOS ---
+EOS_BASE="/eos/user/${USER:0:1}/${USER}/fcc_generation"
+
+PROCESS_DIR="${EOS_BASE}/${PROCESS_DIR}"
+LHE_DIR="${EOS_BASE}/lhe"
+LOG_DIR="${EOS_BASE}/logs"
+OUTPUT_DIR="${EOS_BASE}/output"
+
+echo $OUTPUT_DIR
 
 LHE_FILE="${PROCESS_DIR}/Events/run_01/unweighted_events.lhe.gz"
 LHE_COPY="${LHE_DIR}/${LHE_NAME%.gz}"
@@ -108,14 +147,57 @@ cat > "${MG_CARD}" <<EOF
 import model ${MG_MODEL}
 ${MG_PROCESS}
 output ${PROCESS_DIR} -f
-launch
+EOF
+
+# create run_card.dat to change in the next step
+mg5_aMC "${MG_CARD}"
+
+# ---  Step 2b : change cuts in run_card.dat ---
+RUN_CARD="${PROCESS_DIR}/Cards/run_card.dat"
+
+echo "========== BEFORE LAUNCH =========="
+grep -E "etal|ptl|drll|mmll|mmllmax" "${RUN_CARD}"
+echo "==================================="
+
+if [ -n "$MG_ETAL" ]; then
+    sed -i "s|^[[:space:]]*.*= etal.*|${MG_ETAL} = etal ! max rapidity|" "$RUN_CARD"
+fi
+
+if [ -n "$MG_PTL" ]; then
+    sed -i "s|^[[:space:]]*.*= ptl.*|${MG_PTL} = ptl ! minimum pT|" "$RUN_CARD"
+fi
+
+if [ -n "$MG_DRLL" ]; then
+    sed -i "s|^[[:space:]]*.*= drll.*|${MG_DRLL} = drll ! minimum delta R between leptons|" "$RUN_CARD"
+fi
+
+if [ -n "$MG_MMLL" ]; then
+    sed -i "s|^[[:space:]]*.*= mmll.*|${MG_MMLL} = mmll ! minimum mass of lepton pairs|" "$RUN_CARD"
+fi
+
+if [ -n "$MG_MMLLMAX" ]; then
+    sed -i "s|^[[:space:]]*.*= mmllmax.*|${MG_MMLLMAX} = mmllmax ! maximum mass of lepton pairs|" "$RUN_CARD"
+fi
+
+echo "========== AFTER LAUNCH =========="
+grep -E "etal|ptl|drll|mmll|mmllmax" "${RUN_CARD}"
+echo "==================================="
+
+
+# Now launch the generation
+LAUNCH_CARD="cards/${OUTPUT_TAG}__launch.dat"
+
+cat > "$LAUNCH_CARD" <<EOF
+launch ${PROCESS_DIR}
 set nevents ${NEVENTS}
 set ebeam1 ${EBEAM}
 set ebeam2 ${EBEAM}
 done
 EOF
 
-mg5_aMC "${MG_CARD}"
+echo "--> Launching event generation"
+mg5_aMC "$LAUNCH_CARD"
+
 
 # ---  Step 3 : save MG output (outcoing particles and infos) as .lhe file ---
 echo "--> Preparing LHE file"
@@ -147,7 +229,7 @@ cp cards/template_p8.cmd "${PYTHIA_CARD}"
 
 # write the number of events and LHE file name from processes.yaml dynamically into the Pythia card
 sed -i "s|Main:numberOfEvents = .*|Main:numberOfEvents = ${NEVENTS}|" "${PYTHIA_CARD}"
-sed -i "s|Beams:LHEF = .*|Beams:LHEF = lhe/${LHE_NAME}|" "${PYTHIA_CARD}"
+sed -i "s|Beams:LHEF = .*|Beams:LHEF = ${LHE_DIR}/${LHE_NAME}|" "${PYTHIA_CARD}"
 
 k4run config/pythia.py \
     -n ${NEVENTS} \

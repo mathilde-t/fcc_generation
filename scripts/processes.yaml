@@ -2,7 +2,7 @@ ee_ll:
   description: "Z → l+l- at FCC-ee (Z pole)"
   process_dir: "z_prod_ll"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_ll_ecm91"
 
   mg5:
@@ -14,32 +14,72 @@ ee_ll:
 
   pythia:
     lhe_file: "ee_ll_ecm91.lhe"
-    
 
-ee_tautau:
-  description: "Z → τ+τ- at FCC-ee (Z pole)"
-  process_dir: "z_prod_tautau"
-  ebeam: 45.6
-  nevents: 5000
-  output_tag: "ee_tautau_ecm91"
-
-  mg5:
-    model: "sm"
-    process: "generate e+ e- > z > ta+ ta-"
-
-  pythia:
-    lhe_file: "ee_tautau_ecm91.lhe"
 
 ee_ee:
   description: "Z → e+e- at FCC-ee (Z pole)"
   process_dir: "z_prod_ee"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_ee_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > e+ e-"
+    process:
+      generate e+ e- > e+ e-
+
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
+      mmll: 5.0
+      mmllmax: 150.0
+
+  pythia:
+    lhe_file: "ee_ee_ecm91.lhe"
+
+ee_ee_def:
+  description: "Z → e+e- at FCC-ee (Z pole)"
+  process_dir: "z_prod_ee"
+  ebeam: 45.6
+  nevents: 100
+  output_tag: "ee_ee_ecm91"
+
+  mg5:
+    model: "sm"
+    process: |
+      define l = e+ e-
+      generate e+ e- > l l
+
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
+      mmll: 5.0
+      mmllmax: 150.0
+
+  pythia:
+    lhe_file: "ee_ee_ecm91.lhe"
+
+
+ee_ee_2sub:
+  description: "Z → e+e- at FCC-ee (Z pole)"
+  process_dir: "z_prod_ee"
+  ebeam: 45.6
+  nevents: 100
+  output_tag: "ee_ee_ecm91"
+
+  mg5:
+    model: "sm"
+    process: |
+      generate e+ e- > e+ e-
+      add process e+ e- > e- e+
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
+      mmll: 5.0
+      mmllmax: 150.0
 
   pythia:
     lhe_file: "ee_ee_ecm91.lhe"
@@ -49,12 +89,58 @@ ee_mumu:
   description: "Z → μ+μ- at FCC-ee (Z pole)"
   process_dir: "z_prod_mumu"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_mumu_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > mu+ mu-"
+    process:
+      generate e+ e- > mu+ mu-
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
+
+  pythia:
+    lhe_file: "ee_mumu_ecm91.lhe"
+
+ee_mumu_def:
+  description: "Z → μ+μ- at FCC-ee (Z pole)"
+  process_dir: "z_prod_mumu"
+  ebeam: 45.6
+  nevents: 100
+  output_tag: "ee_mumu_ecm91"
+
+  mg5:
+    model: "sm"
+    process: |
+      define l = mu+ mu-
+      generate e+ e- > l l
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
+
+  pythia:
+    lhe_file: "ee_mumu_ecm91.lhe"
+
+  
+ee_mumu_2sub:
+  description: "Z → μ+μ- at FCC-ee (Z pole)"
+  process_dir: "z_prod_mumu"
+  ebeam: 45.6
+  nevents: 100
+  output_tag: "ee_mumu_ecm91"
+
+  mg5:
+    model: "sm"
+    process: |
+      generate e+ e- > mu+ mu-
+      add process e+ e- > mu- mu+
+    cuts:
+      etal: 10.0
+      ptl: 0.0
+      drll: 0.0
 
   pythia:
     lhe_file: "ee_mumu_ecm91.lhe"
@@ -64,12 +150,14 @@ ee_z_ee:
   description: "Z → e+e- at FCC-ee (Z pole)"
   process_dir: "z_res_prod_ee"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_z_ee_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > z > e+ e-"
+    process: |
+      generate e+ e- > z > e+ e-
+      add process e+ e- > z > e- e+
 
   pythia:
     lhe_file: "ee_z_ee_ecm91.lhe"
@@ -79,12 +167,14 @@ ee_z_mumu:
   description: "Z → μ+μ- at FCC-ee (Z pole)"
   process_dir: "z_res_prod_mumu"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_z_mumu_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > z > mu+ mu-"
+    process: |
+      generate e+ e- > z > mu+ mu-
+      add process e+ e- > z > mu- mu+
 
   pythia:
     lhe_file: "ee_z_mumu_ecm91.lhe"
@@ -93,55 +183,31 @@ ee_ee_minus_z_res:
   description: "Z → e+e- at FCC-ee (Z pole)"
   process_dir: "ee_ee_minus_z_res"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_ee_minus_z_res_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > e+ e- $ z"
+    process: |
+      generate e+ e- > e+ e- $ z
+      add process e+ e- > e- e+ $ z
 
   pythia:
     lhe_file: "ee_ee_minus_z_res_ecm91.lhe"
+
 
 ee_mumu_minus_z_res:
   description: "Z → μ+μ- at FCC-ee (Z pole)"
   process_dir: "ee_mumu_minus_z_res"
   ebeam: 45.6
-  nevents: 5000
+  nevents: 100
   output_tag: "ee_mumu_minus_z_res_ecm91"
 
   mg5:
     model: "sm"
-    process: "generate e+ e- > mu+ mu- $ z"
+    process: |
+      generate e+ e- > mu+ mu- $ z
+      add process e+ e- > mu- mu+ $ z
 
   pythia:
     lhe_file: "ee_mumu_minus_z_res_ecm91.lhe"
-
-ee_ee:
-  description: "e+e- → e+e- at FCC-ee (Z pole)"
-  process_dir: "DY__prod_ee"
-  ebeam: 45.6
-  nevents: 5000
-  output_tag: "ee_ee_ecm91"
-
-  mg5:
-    model: "sm"
-    process: "generate e+ e- > e+ e-"
-
-  pythia:
-    lhe_file: "ee_ee_ecm91.lhe"
-
-
-ee_mumu:
-  description: "e+e- → μ+μ- at FCC-ee (Z pole)"
-  process_dir: "DY__prod_mumu"
-  ebeam: 45.6
-  nevents: 5000
-  output_tag: "ee_mumu_ecm91"
-
-  mg5:
-    model: "sm"
-    process: "generate e+ e- > mu+ mu-"
-
-  pythia:
-    lhe_file: "ee_mumu_ecm91.lhe"
