@@ -1,8 +1,4 @@
 import model sm
-generate e+ e- > e+ e-
-output DY__prod_ee -f
-launch
-set nevents 5000
-set ebeam1 45.6
-set ebeam2 45.6
-done
+define l = e+ e-
+generate e+ e- > l l
+output /eos/user/m/mwitt/fcc_generation/z_prod_ee -f

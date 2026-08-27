@@ -1,0 +1,5 @@
+launch /eos/user/m/mwitt/fcc_generation/z_prod_mumu
+set nevents 100
+set ebeam1 45.6
+set ebeam2 45.6
+done

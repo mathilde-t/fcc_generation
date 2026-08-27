@@ -1,8 +1,0 @@
-import model sm
-generate e+ e- > l+ l-
-output z_prod_ll2 -f
-launch
-set nevents 5000
-set ebeam1 45.6
-set ebeam2 45.6
-done

@@ -10,7 +10,7 @@
 Random:setSeed = on
 Random:seed = 12345
 Main:timesAllowErrors = 5          ! how many aborts before run stops
-Main:numberOfEvents = 5000
+Main:numberOfEvents = 100
 Stat:showProcessLevel = on
 
 ! ==========================================================
@@ -29,7 +29,7 @@ Next:numberShowEvent = 0           ! print event record n times
 ! ==========================================================
 
 Beams:frameType = 4
-Beams:LHEF = lhe/ee_mumu_ecm91.lhe
+Beams:LHEF = /eos/user/m/mwitt/fcc_generation/lhe/ee_mumu_ecm91.lhe
 
 ! ==========================================================
 ! ISR and FSR

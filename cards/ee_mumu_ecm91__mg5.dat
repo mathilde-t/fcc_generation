@@ -1,8 +1,4 @@
 import model sm
-generate e+ e- > mu+ mu-
-output DY__prod_mumu -f
-launch
-set nevents 5000
-set ebeam1 45.6
-set ebeam2 45.6
-done
+define l = mu+ mu-
+generate e+ e- > l l
+output /eos/user/m/mwitt/fcc_generation/z_prod_mumu -f
