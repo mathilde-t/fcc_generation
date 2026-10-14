@@ -1,4 +1,3 @@
 import model sm
-define l = e+ e-
-generate e+ e- > l l
+generate e+ e- > e+ e-
 output /eos/user/m/mwitt/fcc_generation/z_prod_ee -f

@@ -234,7 +234,7 @@ sed -i "s|Beams:LHEF = .*|Beams:LHEF = ${LHE_DIR}/${LHE_NAME}|" "${PYTHIA_CARD}"
 k4run config/pythia.py \
     -n ${NEVENTS} \
     --Pythia8.PythiaInterface.pythiacard ${PYTHIA_CARD} \
-    > ${LOG_DIR}/pythia.log 2>&1
+    > ${LOG_DIR}/pythia_${OUTPUT_TAG}.log 2>&1
 
 mv output_pythia.root "${OUTPUT_FILE}"
 
@@ -246,7 +246,7 @@ DelphesPythia8_EDM4HEP \
     config/edm4hep_IDEA.tcl \
     "${PYTHIA_CARD}" \
     "${DELPHES_OUTPUT}" \
-    > "${LOG_DIR}/delphes.log" 2>&1
+    > "${LOG_DIR}/delphes_${OUTPUT_TAG}.log" 2>&1
 
 
 echo "--> Event generation done :)"

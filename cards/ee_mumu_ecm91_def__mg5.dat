@@ -1,0 +1,4 @@
+import model sm
+define l = mu+ mu-
+generate e+ e- > l l
+output /eos/user/m/mwitt/fcc_generation/z_prod_mumu_def -f
