@@ -104,6 +104,53 @@ ee_mumu:
   pythia:
     lhe_file: "ee_mumu_ecm91.lhe"
 
+# Same as ee_ee / ee_mumu, but with QED initial-state radiation (ISR) of the beams.
+# isr: true -> MG5 uses the LL electron ISR structure function (lpp1=3, lpp2=-3,
+# pdlabel=isronlyll) and Pythia8 runs with PDF:lepton=on, PartonLevel:ISR=off.
+# The incoming e- must be listed first (beam 1 = e-, beam 2 = e+).
+ee_ee_isr:
+  description: "Z → e+e- at FCC-ee (Z pole), with beam ISR"
+  process_dir: "z_prod_ee_isr"
+  ebeam: 45.6
+  nevents: 100000
+  output_tag: "ee_ee_isr_ecm91"
+
+  mg5:
+    model: "sm"
+    isr: true
+    process:
+      generate e- e+ > e- e+
+
+    cuts:
+      etal: 2.03
+      ptl: 0.0
+      drll: 0.0
+      mmll: 5.0
+      mmllmax: 150.0
+
+  pythia:
+    lhe_file: "ee_ee_isr_ecm91.lhe"
+
+ee_mumu_isr:
+  description: "Z → μ+μ- at FCC-ee (Z pole), with beam ISR"
+  process_dir: "z_prod_mumu_isr"
+  ebeam: 45.6
+  nevents: 100000
+  output_tag: "ee_mumu_isr_ecm91"
+
+  mg5:
+    model: "sm"
+    isr: true
+    process:
+      generate e- e+ > mu- mu+
+    cuts:
+      etal: 3.0
+      ptl: 0.0
+      drll: 0.0
+
+  pythia:
+    lhe_file: "ee_mumu_isr_ecm91.lhe"
+
 ee_mumu_def:
   description: "Z → μ+μ- at FCC-ee (Z pole)"
   process_dir: "z_prod_mumu_def"

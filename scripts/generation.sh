@@ -79,6 +79,10 @@ MG_DRLL=$(get_mg_cut drll)
 MG_MMLL=$(get_mg_cut mmll)
 MG_MMLLMAX=$(get_mg_cut mmllmax)
 
+# beam ISR (QED initial-state radiation) on/off, default off
+MG_ISR=$(python3 -c "import yaml; print(str(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['mg5'].get('isr', False)).lower())")
+echo "MG_ISR = $MG_ISR"
+
 echo "MG_ETAL = $MG_ETAL"
 echo "MG_PTL = $MG_PTL"
 echo "MG_DRLL = $MG_DRLL"
@@ -192,8 +196,18 @@ launch ${PROCESS_DIR}
 set nevents ${NEVENTS}
 set ebeam1 ${EBEAM}
 set ebeam2 ${EBEAM}
-done
 EOF
+
+# beam ISR via the LL electron structure function (beam 1 = e-, beam 2 = e+)
+if [ "$MG_ISR" == "true" ]; then
+    cat >> "$LAUNCH_CARD" <<EOF
+set lpp1 3
+set lpp2 -3
+set pdlabel isronlyll
+EOF
+fi
+
+echo "done" >> "$LAUNCH_CARD"
 
 echo "--> Launching event generation"
 mg5_aMC "$LAUNCH_CARD"
@@ -230,6 +244,14 @@ cp cards/template_p8.cmd "${PYTHIA_CARD}"
 # write the number of events and LHE file name from processes.yaml dynamically into the Pythia card
 sed -i "s|Main:numberOfEvents = .*|Main:numberOfEvents = ${NEVENTS}|" "${PYTHIA_CARD}"
 sed -i "s|Beams:LHEF = .*|Beams:LHEF = ${LHE_DIR}/${LHE_NAME}|" "${PYTHIA_CARD}"
+
+# ISR is already in the LHE events (incoming leptons with x < 1):
+# PDF:lepton = on lets Pythia accept them (with off, it aborts on energy-momentum non-conservation),
+# PartonLevel:ISR = off avoids double counting the ISR in the shower.
+if [ "$MG_ISR" == "true" ]; then
+    sed -i "s|^PDF:lepton = .*|PDF:lepton = on|" "${PYTHIA_CARD}"
+    sed -i "s|^PartonLevel:ISR = .*|PartonLevel:ISR = off|" "${PYTHIA_CARD}"
+fi
 
 k4run config/pythia.py \
     -n ${NEVENTS} \
