@@ -1,0 +1,4 @@
+import model sm
+define l = e+ e-
+generate e+ e- > l l
+output /eos/user/m/mwitt/fcc_generation/z_prod_ee_def -f

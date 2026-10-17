@@ -1,0 +1,3 @@
+import model sm
+generate e+ e- > mu+ mu-
+output /eos/user/m/mwitt/fcc_generation/z_prod_mumu -f

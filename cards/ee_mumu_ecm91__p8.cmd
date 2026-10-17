@@ -1,5 +1,5 @@
-! main03.cmnd.
-! This file contains commands to be read in for a Pythia8 run.
+! Generic Pythia8 template card for FCC-ee LHE input
+! This file is automatically adapted by generation.sh
 ! Lines not beginning with a letter or digit are comments.
 ! Names are case-insensitive  -  but spellings-sensitive!
 
@@ -10,6 +10,7 @@
 Random:setSeed = on
 Random:seed = 12345
 Main:timesAllowErrors = 5          ! how many aborts before run stops
+Main:numberOfEvents = 100000
 Stat:showProcessLevel = on
 
 ! ==========================================================
@@ -28,7 +29,7 @@ Next:numberShowEvent = 0           ! print event record n times
 ! ==========================================================
 
 Beams:frameType = 4
-Beams:LHEF = lhe/ee_z_ll_ecm91.lhe
+Beams:LHEF = /eos/user/m/mwitt/fcc_generation/lhe/ee_mumu_ecm91.lhe
 
 ! ==========================================================
 ! ISR and FSR

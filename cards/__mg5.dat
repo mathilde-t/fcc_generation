@@ -1,0 +1,8 @@
+import model 
+
+output z_prod_ll2 -f
+launch
+set nevents 
+set ebeam1 
+set ebeam2 
+done

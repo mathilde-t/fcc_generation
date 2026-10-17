@@ -63,8 +63,7 @@ genfilter.GenParticlesFiltered.Path = "MCParticlesStable"
 ApplicationMgr().TopAlg += [genfilter]
 
 iosvc = IOSvc()
-output_file = os.environ.get("OUTPUT_FILE", "output_pythia.root")
-iosvc.Output = output_file
+iosvc.Output = "output_pythia.root"
 iosvc.outputCommands = ["keep *"]
 
 
