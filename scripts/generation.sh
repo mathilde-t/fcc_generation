@@ -175,8 +175,9 @@ if [ -n "$MG_DRLL" ]; then
     sed -i "s|^[[:space:]]*.*= drll.*|${MG_DRLL} = drll ! minimum delta R between leptons|" "$RUN_CARD"
 fi
 
+# "= mmll " with a trailing space, otherwise the pattern also matches (and overwrites) the mmllmax line
 if [ -n "$MG_MMLL" ]; then
-    sed -i "s|^[[:space:]]*.*= mmll.*|${MG_MMLL} = mmll ! minimum mass of lepton pairs|" "$RUN_CARD"
+    sed -i "s|^[[:space:]]*.*= mmll .*|${MG_MMLL} = mmll ! minimum mass of lepton pairs|" "$RUN_CARD"
 fi
 
 if [ -n "$MG_MMLLMAX" ]; then
