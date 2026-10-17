@@ -1,0 +1,8 @@
+launch /eos/user/m/mwitt/fcc_generation/z_prod_mumu_isr
+set nevents 100000
+set ebeam1 45.6
+set ebeam2 45.6
+set lpp1 3
+set lpp2 -3
+set pdlabel isronlyll
+done
