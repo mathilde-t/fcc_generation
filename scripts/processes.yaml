@@ -10,7 +10,7 @@ ee_ll:
     process: |
       define l+ = e+ mu+ ta+
       define l- = e- mu- ta-
-      generate e+ e- > l+ l-
+      generate e- e+ > l- l+
 
   pythia:
     lhe_file: "ee_ll_ecm91.lhe"
@@ -26,7 +26,7 @@ ee_ee:
   mg5:
     model: "sm"
     process:
-      generate e+ e- > e+ e-
+      generate e- e+ > e- e+
 
     cuts:
       etal: 2.03
@@ -48,8 +48,8 @@ ee_ee_def:
   mg5:
     model: "sm"
     process: |
-      define l = e+ e-
-      generate e+ e- > l l
+      define l = e- e+
+      generate e- e+ > l l
 
     cuts:
       etal: 2.5
@@ -72,8 +72,8 @@ ee_ee_add:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > e+ e-
-      add process e+ e- > e- e+
+      generate e- e+ > e- e+
+      add process e- e+ > e+ e-
     cuts:
       etal: 2.5
       ptl: 5.0
@@ -95,7 +95,7 @@ ee_mumu:
   mg5:
     model: "sm"
     process:
-      generate e+ e- > mu+ mu-
+      generate e- e+ > mu- mu+
     cuts:
       etal: 3.0
       ptl: 0.0
@@ -104,10 +104,12 @@ ee_mumu:
   pythia:
     lhe_file: "ee_mumu_ecm91.lhe"
 
+## ISR switch on to match central lines configuration:
 # Same as ee_ee / ee_mumu, but with QED initial-state radiation (ISR) of the beams.
 # isr: true -> MG5 uses the LL electron ISR structure function (lpp1=3, lpp2=-3,
 # pdlabel=isronlyll) and Pythia8 runs with PDF:lepton=on, PartonLevel:ISR=off.
-# The incoming e- must be listed first (beam 1 = e-, beam 2 = e+).
+## The incoming e- must be listed first (beam 1 = e-, beam 2 = e+), bc this order is
+# reflected in the eta & Co. distribution shapes, and shall match the central lines configuration
 ee_ee_isr:
   description: "Z → e+e- at FCC-ee (Z pole), with beam ISR"
   process_dir: "z_prod_ee_isr"
@@ -161,8 +163,8 @@ ee_mumu_def:
   mg5:
     model: "sm"
     process: |
-      define l = mu+ mu-
-      generate e+ e- > l l
+      define l = mu- mu+
+      generate e- e+ > l l
     cuts:
       etal: 3.0
       ptl: 0.0
@@ -182,8 +184,8 @@ ee_mumu_add:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > mu+ mu-
-      add process e+ e- > mu- mu+
+      generate e- e+ > mu- mu+
+      add process e- e+ > mu+ mu-
     cuts:
       etal: 3.0
       ptl: 0.0
@@ -203,8 +205,8 @@ ee_z_ee:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > z > e+ e-
-      add process e+ e- > z > e- e+
+      generate e- e+ > z > e+ e-
+      add process e- e+ > z > e- e+
 
   pythia:
     lhe_file: "ee_z_ee_ecm91.lhe"
@@ -220,8 +222,8 @@ ee_z_mumu:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > z > mu+ mu-
-      add process e+ e- > z > mu- mu+
+      generate e- e+ > z > mu+ mu-
+      add process e- e+ > z > mu- mu+
 
   pythia:
     lhe_file: "ee_z_mumu_ecm91.lhe"
@@ -236,8 +238,8 @@ ee_ee_minus_z_res:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > e+ e- $ z
-      add process e+ e- > e- e+ $ z
+      generate e- e+ > e+ e- $ z
+      add process e- e+ > e- e+ $ z
 
   pythia:
     lhe_file: "ee_ee_minus_z_res_ecm91.lhe"
@@ -253,8 +255,8 @@ ee_mumu_minus_z_res:
   mg5:
     model: "sm"
     process: |
-      generate e+ e- > mu+ mu- $ z
-      add process e+ e- > mu- mu+ $ z
+      generate e- e+ > mu+ mu- $ z
+      add process e- e+ > mu- mu+ $ z
 
   pythia:
     lhe_file: "ee_mumu_minus_z_res_ecm91.lhe"
