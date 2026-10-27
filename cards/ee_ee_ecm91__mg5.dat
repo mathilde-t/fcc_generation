@@ -1,3 +1,3 @@
 import model sm
 generate e- e+ > e- e+
-output /eos/user/m/mwitt/fcc_generation/z_prod_ee -f
+output /eos/user/m/mwitt/fccanalysis/fcc_generation/z_prod_ee -f

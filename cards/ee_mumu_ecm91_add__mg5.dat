@@ -1,4 +1,4 @@
 import model sm
 generate e+ e- > mu+ mu-
 add process e+ e- > mu- mu+
-output /eos/user/m/mwitt/fcc_generation/z_prod_mumu_add -f
+output /eos/user/m/mwitt/fccanalysis/fcc_generation/z_prod_mumu_add -f

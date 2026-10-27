@@ -103,7 +103,7 @@ LOG_DIR="logs"
 OUTPUT_DIR="output"
 
 # --- put large files on EOS ---
-EOS_BASE="/eos/user/${USER:0:1}/${USER}/fcc_generation"
+EOS_BASE="/eos/user/${USER:0:1}/${USER}/fccanalysis/fcc_generation"
 
 PROCESS_DIR="${EOS_BASE}/${PROCESS_DIR}"
 LHE_DIR="${EOS_BASE}/lhe"

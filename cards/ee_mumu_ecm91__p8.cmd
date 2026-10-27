@@ -29,7 +29,7 @@ Next:numberShowEvent = 0           ! print event record n times
 ! ==========================================================
 
 Beams:frameType = 4
-Beams:LHEF = /eos/user/m/mwitt/fcc_generation/lhe/ee_mumu_ecm91.lhe
+Beams:LHEF = /eos/user/m/mwitt/fccanalysis/fcc_generation/lhe/ee_mumu_ecm91.lhe
 
 ! ==========================================================
 ! ISR and FSR

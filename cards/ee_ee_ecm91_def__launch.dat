@@ -1,4 +1,4 @@
-launch /eos/user/m/mwitt/fcc_generation/z_prod_ee_def
+launch /eos/user/m/mwitt/fccanalysis/fcc_generation/z_prod_ee_def
 set nevents 100000
 set ebeam1 45.6
 set ebeam2 45.6
