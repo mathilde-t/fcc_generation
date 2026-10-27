@@ -110,12 +110,17 @@ ee_mumu:
 # pdlabel=isronlyll) and Pythia8 runs with PDF:lepton=on, PartonLevel:ISR=off.
 ## The incoming e- must be listed first (beam 1 = e-, beam 2 = e+), bc this order is
 # reflected in the eta & Co. distribution shapes, and shall match the central lines configuration
+## Generator cut |eta| <= 3.0 (theta > 5.7 deg) for all local final states; the 15-165 deg theta cut on the
+# ee line is applied at gen level in fcc_pipeline (after ISR/FSR), not in MG5.
+## beam_spread: per-beam relative energy spread applied to the LHE (scripts/lhe_beam_spread.py).
+# Remove it for the samples without spread; with isr: true the LHE <init> beam energy is raised in both cases.
+# Outputs with spread are kept in output_beamspread/, without in output/.
 ee_ee_isr:
   description: "Z → e+e- at FCC-ee (Z pole), with beam ISR"
-  process_dir: "z_prod_ee_isr"
+  process_dir: "z_prod_ee_isr_eta30"
   ebeam: 45.6
   nevents: 100000
-  output_tag: "ee_ee_isr_ecm91"
+  output_tag: "ee_ee_isr_eta30_ecm91"
 
   mg5:
     model: "sm"
@@ -124,14 +129,15 @@ ee_ee_isr:
       generate e- e+ > e- e+
 
     cuts:
-      etal: 2.03
+      etal: 3.0
       ptl: 0.0
       drll: 0.0
       mmll: 5.0
       mmllmax: 150.0
 
   pythia:
-    lhe_file: "ee_ee_isr_ecm91.lhe"
+    lhe_file: "ee_ee_isr_eta30_ecm91.lhe"
+    beam_spread: 0.00132   # relative, per beam, as in the central Whizard cards
 
 ee_mumu_isr:
   description: "Z → μ+μ- at FCC-ee (Z pole), with beam ISR"
@@ -152,6 +158,7 @@ ee_mumu_isr:
 
   pythia:
     lhe_file: "ee_mumu_isr_ecm91.lhe"
+    beam_spread: 0.00132   # relative, per beam, as in the central Whizard cards
 
 ee_mumu_def:
   description: "Z → μ+μ- at FCC-ee (Z pole)"

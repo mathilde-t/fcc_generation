@@ -90,6 +90,9 @@ echo "MG_MMLL = $MG_MMLL"
 echo "MG_MMLLMAX = $MG_MMLLMAX"
 
 LHE_NAME=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['pythia']['lhe_file'])")
+# optional relative beam energy spread per beam (e.g. 0.00132 as in the central Whizard cards), applied to the LHE
+BEAM_SPREAD=$(python3 -c "import yaml; print(yaml.safe_load(open('$YAML_FILE'))['$PROCESS']['pythia'].get('beam_spread', ''))")
+echo "BEAM_SPREAD = $BEAM_SPREAD"
 
 # ---  make directories dynamically ---
 MG_CARD="cards/${OUTPUT_TAG}__mg5.dat"
@@ -229,6 +232,15 @@ fi
 cp "$LHE_FILE" "${LHE_DIR}/${LHE_NAME}.gz"
 gunzip -f "${LHE_DIR}/${LHE_NAME}.gz"
 echo "--> LHE file : ${LHE_FILE}"
+
+# MG5 has no beam energy spread: smear the beam energies event by event in the LHE (see scripts/lhe_beam_spread.py).
+# With ISR this always runs (spread 0 if unset): it raises the <init> beam energy so that Pythia sees x < 1,
+# otherwise x = 1 events get (almost) no FSR in Pythia.
+if [ -n "$BEAM_SPREAD" ] || [ "$MG_ISR" == "true" ]; then
+    echo "--> Applying beam energy spread ${BEAM_SPREAD:-0} per beam to ${LHE_DIR}/${LHE_NAME}"
+    python3 scripts/lhe_beam_spread.py "${LHE_DIR}/${LHE_NAME}" "${LHE_DIR}/${LHE_NAME}.bs" --ebeam "${EBEAM}" --spread "${BEAM_SPREAD:-0}"
+    mv "${LHE_DIR}/${LHE_NAME}.bs" "${LHE_DIR}/${LHE_NAME}"
+fi
 
 # ---  Step 4 : Showering, ISR, and FSR with Pythia8 (FCC k4run), create card ---
 echo "--> Checking k4run installation"
